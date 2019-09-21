@@ -3,26 +3,11 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var MongoClient = require('mongodb').MongoClient
-
-//const uri = "mongodb+srv://esachin:@sachin@@cluster0-fqmpm.mongodb.net/test?retryWrites=true&w=majority";
-const uri = "mongodb://localhost:27017/billingsolutions";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-client.connect(function(err, db) {
-    if (err) throw err
-
-    const orders = client.db("billingsolutions").collection("orders");
-    orders.find().toArray((err, res) => {
-        if (err) throw err;
-        console.log(res);
-    })
-    client.close();
-})
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var cors = require('cors');
 var app = express();
+app.use(cors());
 app.use(express.static(path.join(__dirname, '/billingUI/dist')));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
