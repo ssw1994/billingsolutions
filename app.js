@@ -5,6 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var categoryRouter = require('./routes/categories');
+var uploadRouter = require('./routes/uploader');
+var bodyparser = require('body-parser');
 var cors = require('cors');
 var app = express();
 app.use(cors());
@@ -17,10 +20,16 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+bodyParser = {
+    json: { limit: '50mb', extended: true },
+    urlencoded: { limit: '50mb', extended: true }
+};
 //app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/categories', categoryRouter);
+app.use('/api/upload', uploadRouter);
 app.get('/', function(req, res, next) {
     //res.render('index', { title: 'Express' });
     res.sendFile(path.join(__dirname, '/billingUI/dist/billingUI/index.html'));

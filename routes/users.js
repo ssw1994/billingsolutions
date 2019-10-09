@@ -18,9 +18,73 @@ router.post('/register', (req, res, next) => {
             res.send(success);
         },
         (error) => {
+            res.send(error);
             console.error(error);
         }
     )
 });
+
+router.post('/login', (req, res, next) => {
+    try {
+        console.log(JSON.stringify(req.body));
+        let user = req.body;
+
+        User.loginUser(user).then(
+            (success) => {
+                res.send(success);
+            },
+            (error) => {
+                res.send(error);
+            }
+        )
+    } catch (error) {
+
+    }
+});
+
+router.post('/menus', (req, res, next) => {
+    try {
+        let id = req.body && req.body.userId ? req.body.userId : null;
+        console.log(id);
+        if (id) {
+            User.getMenus(id)
+                .then(
+                    (success) => {
+                        res.send(success);
+                    },
+                    (error) => {
+                        res.send(error);
+                    }
+                );
+        } else {
+            res.send(new response("Plase provide user's id", null, httpResponseCodes.error));
+        }
+    } catch (error) {
+        res.send(error);
+    }
+});
+
+router.get('/settings/:settingtype', (req, res, next) => {
+    try {
+        let id = req.params.settingtype && req.params.settingtype ? req.params.settingtype : null;
+        console.log(id);
+        if (id) {
+            User.getSettings(id)
+                .then(
+                    (success) => {
+                        res.send(success);
+                    },
+                    (error) => {
+                        res.send(error);
+                    }
+                );
+        } else {
+            res.send(new response("Plase provide user's id", null, httpResponseCodes.error));
+        }
+    } catch (error) {
+        res.send(error);
+    }
+})
+
 
 module.exports = router;
