@@ -7,11 +7,14 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var categoryRouter = require('./routes/categories');
 var uploadRouter = require('./routes/uploader');
+var productRouter = require('./routes/products');
+
 var bodyparser = require('body-parser');
 var cors = require('cors');
 var app = express();
 app.use(cors());
-app.use(express.static(path.join(__dirname, '/billingUI/dist')));
+app.use(express.static(path.join(__dirname,'./public/images')));
+// app.use(express.static(path.join(__dirname, '/billingUI/dist')));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -30,10 +33,13 @@ bodyParser = {
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/products',productRouter);
 app.get('/', function(req, res, next) {
     //res.render('index', { title: 'Express' });
     res.sendFile(path.join(__dirname, '/billingUI/dist/billingUI/index.html'));
 });
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     next(createError(404));

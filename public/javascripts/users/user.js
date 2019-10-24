@@ -29,7 +29,7 @@ let user = (function(iUserObj) {
                             }).toArray()
                             .then(
                                 (res) => {
-                                    console.log(res);
+                                    //console.log(res);
                                     if (res.length > 0) {
                                         resolve(new response("Details Verified", res, httpResponseCodes.success));
                                     } else {

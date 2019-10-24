@@ -1,4 +1,4 @@
-const HttpResponseCode = {
+const HttpResponseCodes = {
     success: 200,
     duplicate: 302,
     error: 400,
@@ -14,4 +14,8 @@ const IImageTypes = {
 }
 module.exports = ISettingType;
 
-module.exports = HttpResponseCode;
+module.exports = HttpResponseCodes;
+
+
+// const uri = "mongodb://localhost:27017/billingsolutions";
+// module.exports = uri

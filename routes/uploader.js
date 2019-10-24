@@ -32,15 +32,14 @@ let getUploadsDetails = function(userid, type, iCallback) {
 
 router.post('/:userid/:type', (req, res, next) => {
     try {
-        uploader.upload(req.params.userid, req.params.type)
+        uploader.upload(req.params.userid, req.params.type, req)
             .then(
                 (upload) => {
                     upload(req, res, (err) => {
                         if (err)
                             res.send(new response("error", err, httpResponseCodes.error));
                         else {
-                            path = req.file.path;
-                            res.send(new response("Upload Completed", [path], httpResponseCodes.success));
+                            res.json(new response("Upload Completed", req.files, httpResponseCodes.success));
                         }
                     });
                 },
