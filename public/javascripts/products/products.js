@@ -1,31 +1,24 @@
-var mongoose = require('mongoose');
-let MongoClient = require('mongodb').MongoClient
-var uri = "mongodb://localhost:27017/billingsolutions";
 var Model = require('./schemas');
+var StoreDB = require("../db");
 var response = require("../HttpResponse/response");
 var httpResponseCodes = require('../lib');
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(function (err, db) {
-    if (err) throw err
-    products = client.db("billingsolutions").collection('tblproducts');
-    imagesdb = client.db("billingsolutions").collection('tblImages');
-    categorydb = client.db("billingsolutions").collection('tblProductCategory');
-    client.close();
-})
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-var db = mongoose.connection;
-
-db.on('error', (error) => {
-    console.error(error)
-});
-db.once('open', () => {
-
-});
-
+var ObjectId = require('mongodb').ObjectId
+let products, imagesdb, categorydb;
+StoreDB.connect().then(
+    (db) => {
+        products = db.collection('tblproducts');
+        imagesdb = db.collection('tblImages');
+        categorydb = db.collection('tblProductCategory');
+    },
+    (error) => {
+        throw error;
+    }
+);
 
 let prds = (function () {
     let updateProduct = function (iProduct) {
         try {
+            console.log(products);
             return new Promise((resolve, reject) => {
                 products.insertOne(iProduct).then(
                     (success) => {
@@ -84,6 +77,39 @@ let prds = (function () {
         }
     }
 
+
+    let product_details = function (param) {
+        try {
+            return new Promise((resolve, reject) => {
+                products.aggregate([
+                    { $match: { "_id": ObjectId(param.id) } },
+                    {
+                        "$addFields": {
+                            "productId": { "$toString": "$_id" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'tblImages',
+                            localField: 'productId',
+                            foreignField: 'productId',
+                            as: 'images'
+                        }
+                    }]).toArray().then(
+                        (success) => {
+                            console.log(success)
+                            resolve(new response("success", success, httpResponseCodes.success));
+                        },
+                        (error) => {
+                            reject(new response("error", error, httpResponseCodes.error))
+                        }
+                    )
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     let getProducts = function (param) {
         try {
             return new Promise((resolve, reject) => {
@@ -112,6 +138,7 @@ let prds = (function () {
                             }
                         );
                 } else {
+                    console.log("fetching  products for --", param.userId);
                     products.aggregate([
                         {
                             "$addFields": {
@@ -127,6 +154,7 @@ let prds = (function () {
                             }
                         }]).toArray().then(
                             (success) => {
+                                console.log(success)
                                 resolve(new response("success", success, httpResponseCodes.success));
                             },
                             (error) => {
@@ -166,7 +194,8 @@ let prds = (function () {
         updateProduct,
         saveImages,
         getProducts,
-        saveCategories
+        saveCategories,
+        product_details
     }
 })();
 module.exports = prds;

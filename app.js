@@ -14,7 +14,7 @@ var cors = require('cors');
 var app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname,'./public/images')));
-// app.use(express.static(path.join(__dirname, '/billingUI/dist')));
+app.use(express.static(path.join(__dirname, '/billingUI/dist')));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');

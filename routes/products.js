@@ -15,6 +15,17 @@ router.post('/', function (req, res, next) {
     )
 });
 
+router.post("/details",function(req,res,next){
+    products.product_details(req.body).then(
+        (success)=>{
+            res.send(success);
+        },
+        (error)=>{
+            console.error(error);
+        }
+    )
+})
+
 router.post('/saveupdate', function (req, res, next) {
     try {
         products.updateProduct(req.body).then(

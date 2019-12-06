@@ -1,5 +1,3 @@
-const config= {
-    FACEBOOOK_APP_ID: 522864618504329,
-    FACEBOOK_SECRET_KEY:
+const config = {
+    FACEBOOOK_APP_ID: 522864618504329
 }
-module.export = 

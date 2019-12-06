@@ -1,32 +1,40 @@
-let MongoClient = require('mongodb').MongoClient
 var response = require("../HttpResponse/response");
+var StoreDB = require("../db");
 var httpResponseCodes = require('../lib');
 var ObjectId = require('mongodb').ObjectId
 let User = require('./model');
-const uri = "mongodb://localhost:27017/billingsolutions";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let users, menus, settings;
-client.connect(function(err, db) {
-    if (err) throw err
-    users = client.db("billingsolutions").collection('users');
-    menus = client.db("billingsolutions").collection('tblmenus');
-    settings = client.db("billingsolutions").collection('tblsettings');
-    client.close();
-})
-let user = (function(iUserObj) {
+StoreDB.connect().then(
+    (db) => {
+        users = db.collection('users');
+        menus = db.collection('tblmenus');
+        settings = db.collection('tblsettings');
+    },
+    (error) => {
+        throw error;
+    }
+)
+// client.connect(function(err, db) {
+//     if (err) throw err
+//     users = client.db("billingsolutions").collection('users');
+//     menus = client.db("billingsolutions").collection('tblmenus');
+//     settings = client.db("billingsolutions").collection('tblsettings');
+//     client.close();
+// })
+let user = (function (iUserObj) {
 
-    let loginUser = function(iUserObj) {
+    let loginUser = function (iUserObj) {
         try {
             return new Promise((resolve, reject) => {
                 if (iUserObj) {
                     console.log("Verfy", JSON.stringify(iUserObj));
                     if (iUserObj.hasOwnProperty('username') && iUserObj.hasOwnProperty('password')) {
                         users.find({
-                                $and: [
-                                    { "username": iUserObj.username },
-                                    { "password": iUserObj.password }
-                                ]
-                            }).toArray()
+                            $and: [
+                                { "username": iUserObj.username },
+                                { "password": iUserObj.password }
+                            ]
+                        }).toArray()
                             .then(
                                 (res) => {
                                     //console.log(res);
@@ -58,7 +66,7 @@ let user = (function(iUserObj) {
         }
     }
 
-    let registerUser = function(iUserObj) {
+    let registerUser = function (iUserObj) {
         try {
             return new Promise((resolve, reject) => {
                 userobj = null;
@@ -114,7 +122,7 @@ let user = (function(iUserObj) {
      * @description this function is used for getting user details by id
      * @param {*} userid 
      */
-    let getUserDetails = function(userid) {
+    let getUserDetails = function (userid) {
         try {
             return new Promise((resolve, reject) => {
                 try {
@@ -138,7 +146,7 @@ let user = (function(iUserObj) {
         }
     }
 
-    let getMenus = function(userId) {
+    let getMenus = function (userId) {
         try {
             return new Promise((resolve, reject) => {
                 getUserDetails(userId).then(
@@ -178,7 +186,7 @@ let user = (function(iUserObj) {
      * @description this function is used for getting settings
      * @param {*} iSettingType 
      */
-    let getSettings = function(iSettingType) {
+    let getSettings = function (iSettingType) {
         try {
             return new Promise((resolve, reject) => {
                 settings.find()

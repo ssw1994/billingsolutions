@@ -1,21 +1,21 @@
-let MongoClient = require('mongodb').MongoClient
+var StoreDB = require("../db");
 var response = require("../HttpResponse/response");
 var httpResponseCodes = require('../lib');
-const uri = "mongodb://localhost:27017/billingsolutions";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let category;
-client.connect(function(err, db) {
-    if (err) throw err
-    category = client.db("billingsolutions").collection('tblcategory');
-    client.close();
-})
-let Category = (function(iUserObj) {
+StoreDB.connect().then(
+    (db) => {
+        category = db.collection('tblcategory');
+    },
+    (error) => {
+        throw error;
+    });
+let Category = (function (iUserObj) {
 
     /**
      * @author SSW
      * @description this function is used for updating categories
      */
-    let updateCategory = function(iCategory) {
+    let updateCategory = function (iCategory) {
         try {
             return new Promise((resolve, reject) => {
                 try {
@@ -44,7 +44,7 @@ let Category = (function(iUserObj) {
      * @param {*} obj 
      * @param {*} iArr 
      */
-    let filterChilds = function(obj, iArr) {
+    let filterChilds = function (obj, iArr) {
         try {
             let index = iArr.findIndex((x) => x.parentId == obj._id);
             while (index >= 0) {
@@ -68,7 +68,7 @@ let Category = (function(iUserObj) {
      * @description this function is used for for creating Tree structure
      * @param {*} iArr 
      */
-    let createTreeStructure = function(iArr) {
+    let createTreeStructure = function (iArr) {
         try {
             for (let i = 0; i < iArr.length > 0; i++) {
                 iArr[i] = filterChilds(iArr[i], iArr);
@@ -83,7 +83,7 @@ let Category = (function(iUserObj) {
      * @author SSW
      * @description this function is used for getting categories
      */
-    let getCategories = function() {
+    let getCategories = function () {
         try {
             return new Promise((resolve, reject) => {
                 try {
@@ -110,7 +110,7 @@ let Category = (function(iUserObj) {
      * @author SSW
      * @description this function is used for getting child categories
      */
-    let getChildCategories = function() {
+    let getChildCategories = function () {
         try {
 
         } catch (error) {
@@ -122,7 +122,7 @@ let Category = (function(iUserObj) {
      * @author SSW
      * @description this function is used for
      */
-    let addChildCategory = function() {
+    let addChildCategory = function () {
         try {
 
         } catch (error) {
@@ -130,7 +130,7 @@ let Category = (function(iUserObj) {
         }
     }
 
-    let deleteCategory = function(iCategory) {
+    let deleteCategory = function (iCategory) {
         try {
 
         } catch (error) {

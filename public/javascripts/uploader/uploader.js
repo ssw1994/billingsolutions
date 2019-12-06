@@ -1,15 +1,17 @@
-let MongoClient = require('mongodb').MongoClient
+var StoreDB = require("../db");
 var response = require("../HttpResponse/response");
 var httpResponseCodes = require('../lib');
 const uri = "mongodb://localhost:27017/billingsolutions";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let uploader;
 var multer = require('multer');
-client.connect(function (err, db) {
-    if (err) throw err
-    uploader = client.db("billingsolutions").collection('tblcategory');
-    client.close();
-})
+StoreDB.connect(
+    (db) => {
+        uploader = db.collection('tblcategory');
+    },
+    (error) => {
+        throw error;
+    }
+);
 
 let Uploader = (function () {
 
@@ -22,10 +24,10 @@ let Uploader = (function () {
                     destination: dir,
                     filename: function (req, file, cb) {
                         let ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
-                        let name = file.originalname.substring(0,file.originalname.lastIndexOf('.'));
+                        let name = file.originalname.substring(0, file.originalname.lastIndexOf('.'));
                         name = name.split(' ').join('');
                         name = name.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
-                        cb(null,Date.now() +"_"+name)
+                        cb(null, Date.now() + "_" + name)
                     }
                 })
                 switch (type.toLowerCase()) {
